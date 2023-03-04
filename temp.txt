@@ -1,0 +1,268 @@
+
+import AddView from './add';
+import ListView from './list';
+import TestView from './test';
+
+
+function HomeView  (){
+  const [selectedTab, setSelectedTab] = useState('');
+
+    const SelectedTab = () => {
+        switch(selectedTab){
+            case 'A':
+                return <AddView />
+            case 'B':
+                return <ListView />
+            case 'C':
+                return <TestView/>
+            default:
+                return /* empty div maybe */
+        }
+    }
+
+  return (
+    <Box as={SafeAreaView} bg={theme.colors.purple} flex={1} style={{justifyContent: 'center'} }>
+         <Button border={1} bg={theme.colors.mediumBlue} px={16} py={32} ml={20} mr={20} title="Add Word" onPress={() => setSelectedTab('A')} />
+          <Button border={1} bg={theme.colors.lightBlue} px={16} py={32} mt={20} ml={20} mr={20} title="List Words"  onPress={() => setSelectedTab('B')} />
+          <Button border={1} bg={theme.colors.lightBlue} px={16} py={32} mt={20} ml={20} mr={20} title="Start Test" onPress={() => setSelectedTab('C')} />
+          {SelectedTab()}
+    </Box>
+    
+  );
+};
+
+export default HomeView 
+
+
+
+mport React from 'react';
+import styled from 'styled-components';
+import {TouchableOpacity} from 'react-native';
+import {compose, color, size, space, flexbox, layout, borderRadius, position} from 'styled-system';
+
+const Button = styled(TouchableOpacity)(
+    compose(
+        color,
+        size,
+        space,
+        flexbox,
+        layout,
+        borderRadius,
+        position,
+    ));
+
+Button.defaultProps = {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+}
+
+
+export default Button;
+
+
+    {/* return (
+      <Box as={SafeAreaView} bg={theme.colors.purple} flex={1} style={{justifyContent: 'center'} }>
+        
+        <Button
+            style={theme.styles.navigationButtonContainer}
+            onPress={() => {
+              navigation.navigate("Home")
+            }}
+            title={'Home'}
+          />
+      </Box>
+    );
+          */}
+
+
+
+
+CREATE TABLE words(
+   id  INTEGER PRIMARY KEY     NOT NULL,
+   english          CHAR(200)    NOT NULL,
+   turkish          CHAR(200)     NOT NULL,
+   category         CHAR(50)
+);
+
+UPDATE TABLE words(
+   id  INT PRIMARY KEY     NOT NULL AUTO_INCREMENT,
+   english          CHAR(200)    NOT NULL,
+   turkish          CHAR(200)     NOT NULL,
+   category         CHAR(50)
+);
+
+
+CREATE TABLE words ("id" INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, "english" CHAR(200) NOT NULL, "turkish" CHAR(200) NOT NULL, "category" CHAR(50));
+
+
+/**
+ * @format
+ */
+
+import {AppRegistry} from 'react-native';
+import App from './src/app';
+import {name as appName} from './app.json';
+
+
+AppRegistry.registerComponent(appName, () => App);
+
+
+
+      //const [english, onChangeText] = React.useState('');
+      //const [turkish, onChangeNumber] = React.useState('');
+
+      const [english, setEnglish] = React.useState('');
+      const [turkish, setTurkish] = React.useState('');
+  
+      useEffect(() => {
+          createTable();
+          getData();
+        
+      }, []);
+  
+      const createTable = () => {
+          db.transaction(function (tx){
+              tx.executeSql(
+                  "CREATE TABLE IF NOT EXISTS "
+                  + "words"
+                  + "(id INTEGER PRIMARY KEY AUTOINCREMENT, english CHAR(200) NOT NULL, turkish CHAR(200) NOT NULL);"
+              );
+          });
+      };
+  
+      const getData = () => {
+          try {
+              // AsyncStorage.getItem('UserData')
+              //     .then(value => {
+              //         if (value != null) {
+              //             navigation.navigate('Home');
+              //         }
+              //     })
+              db.transaction((tx) => {
+                  tx.executeSql(
+                      "select * from words;",
+                      [],
+                      (tx, results) => {
+                          var len = results.rows.length;
+                          if (len > 0) {
+                              navigation.navigate('List Word');
+                          }
+                      }
+                  )
+              })
+    
+          } catch (error) {
+              console.log(error);
+          }
+      }
+      const setData = async () => {
+        if (english.length == 0 || turkish.length == 0) {
+            Alert.alert('Warning!', 'Please write your data.')
+        } else {
+            try {
+                // var user = {
+                //     Name: name,
+                //     Age: age
+                // }
+                // await AsyncStorage.setItem('UserData', JSON.stringify(user));
+                await db.transaction(async (tx) => {
+                    // await tx.executeSql(
+                    //     "INSERT INTO Users (Name, Age) VALUES ('" + name + "'," + age + ")"
+                    // );
+                    await tx.executeSql(
+                        "insert into words (id, english, turkish) values (null, ?, ?);",
+                        [id, {english}, {turkish}]
+                    );
+                })
+                navigation.navigate('List Word');
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+  
+  
+
+    let db = SQLiteDatabase;
+
+  useEffect(() => {
+      SQLite.enablePromise(true);
+      SQLite.openDatabase({name: 'englishwords.db', location: 'Documents'})
+        .then(db => console.log('Database opened:', db))
+        .catch(e => console.log(e));
+    }, []);
+    var db2 = SQLite.openDatabase({name: 'englishwords.db', location: 'Documents'})
+
+    const recordsInserted = (results) => {
+      console.log('Selecting records...');
+      db2.transaction((tx) => {
+        tx.executeSql('SELECT * FROM words', [], (tx, results) => {
+            console.log("Query completed");
+      
+          });
+      });
+  
+    
+    };
+
+
+
+
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      records: []
+    }
+
+    service.init()
+
+    
+  }
+
+  async componentWillMount() {
+
+  
+    service.createTable("words", [{
+      name: 'id',
+      dataType: 'integer',
+      isNotNull: true,
+      options: 'PRIMARY KEY AUTOINCREMENT'
+    }, {
+      name: 'english',
+      dataType: 'text'
+    }, {
+      name: 'turkish',
+      dataType: 'text'
+    }, {
+      name: 'category',
+      dataType: 'text'
+    }
+  ])
+
+  service.insert("words", {
+      english: 'Word1',
+      turkish: 'Kelime2'
+    }
+    )
+    
+  var result = await service.select("words")
+  this.setState({
+    records: result
+  })
+
+}
+
+render()return (
+      <View style={styles.container}>
+        <Button title="Save" />
+      
+        <FlatList
+          data={this.state.records}
+          renderItem={({ item }) => <Text>{item.english} -- {item.turkish}</Text>}
+          keyExtractor={(item) => item.id}
+        />
+      </View>
+    );
