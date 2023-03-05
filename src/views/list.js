@@ -12,7 +12,6 @@ import {
 import theme from '../utils/theme';
 import Box from '../components/box';
 import WebSQLite from "react-native-quick-websql"
-import TableExample from './table';
 //import { DataTable } from 'react-native-paper';
 import DataTable, { COL_TYPES } from 'react-native-datatable-component';
 import Button from '../components/button';

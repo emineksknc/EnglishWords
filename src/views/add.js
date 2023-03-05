@@ -65,14 +65,22 @@ function AddScreen  ({navigation})  {
     db.transaction(
       (txn) => {
         console.log('Running transaction (insert)')
-        
-        txn.executeSql('INSERT INTO Words (english, turkish, category) VALUES (:english, :turkish, :category)', [
-          english,
-          turkish,
-          category
-        ])
+        if (english!='' && turkish!=''){
+          txn.executeSql('INSERT INTO Words (english, turkish, category) VALUES (:english, :turkish, :category)', [
+            english,
+            turkish,
+            category
+          ])
+          
+          
+      }
+      else{
+        (e) => {
+          console.error(e)
+        }
+      }
+      
         saveAlert()
-        
         txn.executeSql('SELECT * FROM `Words`', [], function (_tx, res) {
           for (let i = 0; i < (res.rows?.length || 0); ++i) {
             console.log('item:', res.rows?.item(i))
